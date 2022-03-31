@@ -1,0 +1,162 @@
+openapi: 3.0.1
+info:
+  title: zane-articles-api
+  description: An API for interacting with articles database. A Nine Junior Developer
+    take home assignment
+  contact:
+    name: Zane Geiser
+    email: zanegeiser@gmail.com
+  version: 1.0.0
+servers:
+- url: /
+paths:
+  /articles:
+    summary: path for posting new articles
+    description: this path receives an article in JSON format and stores it within
+      the database
+    post:
+      tags:
+      - Articles
+      summary: Post an article to the database
+      description: This method takes an article in JSON format and adds it to the
+        database
+      operationId: post_article
+      requestBody:
+        description: A new article to post
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/article'
+      responses:
+        "201":
+          description: successful post of article
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Example:
+                  value: Successfully added the article to the database
+        "400":
+          description: invalid body
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error:
+                  value: "Failed to add the article to the database.  Ensure your\
+                    \ body contains a JSON file with:\n{\n  \"id\": String,\n  \"\
+                    title\": String,\n  \"date\" : String (yyyy-mm-dd),\n  \"body\"\
+                    \ : String,\n  \"tags\" : String[]\n}"
+      x-openapi-router-controller: swagger_server.controllers.articles_controller
+  /articles/{id}:
+    summary: path for getting articles by id
+    description: This path will allow Get methods on an article and will return a
+      JSON representation of the article
+    get:
+      tags:
+      - Articles
+      summary: gets an article by id
+      description: This GET method returns a JSON representation of an article with
+        the given id
+      operationId: get_article
+      parameters:
+      - name: id
+        in: path
+        description: The id of the article.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Succesful get of article
+          content:
+            application/json:
+              examples:
+                Example:
+                  value: "{\n  \"id\": \"1\",\n  \"title\": \"latest science shows\
+                    \ that potato chips are better for you than sugar\",\n  \"date\"\
+                    \ : \"2016-09-22\",\n  \"body\" : \"some text, potentially containing\
+                    \ simple markup about how potato chips are great\",\n  \"tags\"\
+                    \ : [\"health\", \"fitness\", \"science\"]\n}"
+        "400":
+          description: Invalid Argument
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error2:
+                  value: Request did not work. Ensure ID is in the correct format.
+        "404":
+          description: good request but no article found
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error1:
+                  value: Could not find an article with that id
+      x-openapi-router-controller: swagger_server.controllers.articles_controller
+  /tags/{tagName}/{date}:
+    summary: Path for finding articles with some tag on some date
+    description: The GET method will return the list of articles that have that tag
+      name on the given date and some summary data about that tag for that day.
+    get:
+      tags:
+      - Tags
+      summary: get a summary of a tag used on a given day
+      description: "Returns a JSON file for the tag showing how many times it was\
+        \ used on the day, a list of articles using the tag, and related tags."
+      operationId: get_tag_data_on_date
+      parameters:
+      - name: tagName
+        in: path
+        description: The tag to search by
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: date
+        in: path
+        description: date to search by (yyyy-mm-dd)
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful get of tag-date data
+          content:
+            application/json:
+              examples:
+                Example:
+                  value: "{\n  \"tag\" : \"health\",\n  \"count\" : 17,\n    \"articles\"\
+                    \ :\n      [\n        \"1\",\n        \"7\"\n      ],\n    \"\
+                    related_tags\" :\n      [\n        \"science\",\n        \"fitness\"\
+                    \n      ]\n}"
+        "400":
+          description: Invalid arguments of tag or date
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error:
+                  value: Invalid Argument
+      x-openapi-router-controller: swagger_server.controllers.tags_controller
+components:
+  schemas:
+    article:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        date:
+          type: string
+        body:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+      xml:
+        name: article
+
