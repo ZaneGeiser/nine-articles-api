@@ -1,12 +1,25 @@
 import datetime
 
 class Article():
+    """
+    Python Object to represent an article. used over simple python dictionary
+    in order to abstract away some data validation.
+    """
     def __init__(self, id, title, body, date, tags=[]):
         self.id = id
         self.title = title
         self.body = body
-        self.date = date
+        self.set_date(date)
         self.set_tags(tags)
+
+    def to_dictionary(self):
+        return {
+                    'id': self.id,
+                    'title': self.title,
+                    'body': self.body,
+                    'date': self.date,
+                    'tags': self.tags
+                }
 
     def set_title(self, title):
         self.title = title
@@ -24,11 +37,9 @@ class Article():
     def set_tags(self, tags):
         if isinstance(tags, list):
             self.tags = tags
-            print("tags after creating empty tag list: " + str(self.tags))
         else:
             try:
                 self.tags = list(tags)
-                print("tags after casting to a list: " + str(self.tags))
             except TypeError:
                 raise TypeError('incorrect tags format. tags must be in a list.')
             

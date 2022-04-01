@@ -1,12 +1,9 @@
-from calendar import c
 import sqlite3
 from models import Article
 
-
-connection = sqlite3.connect('articles.db')
-cursor = connection.cursor()
-
 """
+These functions perform the pushing and getting of data from the database.
+
 articles.db TABLE DEFFINITIONS
 TABLE articles
     COLUMNS (
@@ -73,6 +70,11 @@ def get_tag_data(tag, date):
     :param date: date_string in format yyyy-mm-dd
     :returns: Dictionary with keys [tag, count, articles, related_tags]
     """
+    # Design spec says:
+    # "The articles field contains a list of ids for the last 10 articles entered for that day."
+    # However, there is no time stamp assoicated with the article.date. We can truncate to 10 articles
+    # with no sort order or report all article_ids. For now, the latter option has been chosen.
+
     connection = sqlite3.connect('articles.db')
     cursor = connection.cursor()
 
@@ -83,8 +85,10 @@ def get_tag_data(tag, date):
                      {'tagName': tag, 'date': date})
 
     article_ids = clean_list_tuple(cursor.fetchall())
-    print(f'tag_date_article_ids: {article_ids}')
-    if article_ids is None: return None
+    
+    # No need to continue if there are no article ID's
+    if len(article_ids) == 0:
+        return {'tag': tag, 'count': 0, 'articles': [], 'related_tags': []}
     
     cursor.execute("""SELECT tagName FROM tags WHERE tagName!=(:tagName)
                         AND article_id IN
@@ -95,13 +99,10 @@ def get_tag_data(tag, date):
                      {'tagName': tag, 'date': date})
 
     related_tags = clean_list_tuple(cursor.fetchall())
-    print(f'related_tags pre clean: {related_tags}')
+    
     #remove duplicate related tags
     related_tags = list(dict.fromkeys(related_tags))
-    print(f'related_tags post clean: {related_tags}')
-    
     count = len(article_ids)
-    print(f'count of tags: {count}')
     
     connection.close()
 
@@ -119,6 +120,3 @@ def clean_list_tuple(list_):
         for item in list_:
             output.append(str(item[0]))
     return output
-                    
-connection.commit()
-connection.close()
