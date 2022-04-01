@@ -1,0 +1,73 @@
+{
+	"articles": [{
+			"id": "1",
+			"title": "latest science shows that potato chips are better for you than sugar",
+			"date": "2016-09-22",
+			"body": "some text, potentially containing simple markup about how potato chips are great",
+			"tags": ["health", "fitness", "science"]
+		},
+		{
+			"id": "2",
+			"title": "couple travles Australia in search of the best hot chips",
+			"date": "2021-06-22",
+			"body": "They found the best hot chips at Spuds Roadhouse in Pimba, SA",
+			"tags": ["travel", "vanlife"]
+		},
+		{
+			"id": "3",
+			"title": "Heres why you should store your opened chips in the fridge.",
+			"date": "2021-06-22",
+			"body": "Distingished Sydney Uni Scientist claims that refigeration increase the shelf life of potato chips.",
+			"tags": ["science", "health", "life"]
+		},
+		{
+		"id": "4",
+				"title": "Yellow Sticks of Sadness",
+				"date": "2022-04-01",
+				"body": "Some chips are cold or stale such that eating them brings no joy.",
+				"tags": ["opinion", "life"]
+		},
+		{
+			"id": "5",
+			"title": "Even the seagulls reject it",
+			"date": "2022-04-01",
+			"body": "We thought these nusiance of the beach would never find a chip to disgusting for it. Keep clear of this Great Ocean Road chip joint.",
+			"tags": ["opinion","travel"]
+		},
+		{
+			"id": "6",
+			"title": "BREAKING: Costco Sold out of XL Kettle chip bags!",
+			"date": "2022-04-01",
+			"body": "Costco Australia can no longer stock Kettle chips! Is this the next toilet paper rush?",
+			"tags": ["breaking", "life"]
+		},
+		{
+			"id": "7",
+			"title": "Worth Naming Your First Child After?",
+			"date": "2022-04-12",
+			"body": "Remember that couple who found the best hot chips in Pimba? See article id 2. They've just named their first child Spud in honour of the joint.",
+			"tags": ["life", "travel"]
+		},
+		{
+			"id": "8",
+			"title": "Worthy of its own Brochure at the Visitor Centre",
+			"date": "2041-08-01",
+			"body": "Spud, daughter of Zane Geiser, has passed a law in parliment such that every visitor center must keep info on the best hot chips in their region.",
+			"tags": ["travel", "government"]
+		},
+		{
+			"id": "9",
+			"title": "Wish you had bought stock in Kettle? We do too.",
+			"date": "2041-08-01",
+			"body": "Spud is now so rich from the profits she made off her Kettle Chip Co stocks that she's sending chips to the colony on Mars.",
+			"tags": ["science", "space", "money"]
+		},	
+		{
+			"id": "10",
+			"title": "Wish you had bought stock in Kettle? We do too.",
+			"date": "2041-12-01",
+			"body": "Spud is now so rich from the profits she made off her Kettle Chip Co stocks that she's sending chips to the colony on Mars.",
+			"tags": []
+		}	 
+	]
+}

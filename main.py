@@ -1,7 +1,7 @@
 import datetime
 import db_interface
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from models import Article
 
 
@@ -13,15 +13,7 @@ def main():
 
     @app.route('/')
     def home():
-        return """
-        <h1>Welcome to a simple articles api.</h1>
-        <h4>Available endpoints:</h4>
-        <ul>
-        <li>POST an article to path /article</li>
-        <li>GET an article from /articles/{id}</li>
-        <li>GET tag info from /tags/{tagName}/{date}</li>
-        </ul>
-        """
+        return render_template('index.html')
 
     @app.route('/articles', methods=['POST'])
     def post_article():
@@ -35,7 +27,7 @@ def main():
                     return f"expected request body to have key: {key}, but was not found.", 400
 
             try:
-                new_article = Article(article['id'], article['title'], article['body'], article['date'])
+                new_article = Article(article['id'], article['title'], article['body'], article['date'], [])
             except Exception as e:
                 return str(e), 400
 
