@@ -45,8 +45,7 @@ class Article():
             
     def add_tag(self, tag):
         if isinstance(tag, str):
-            self.tags.append(str(tag))
-        print('tags after adding tags: ' + str(self.tags))
+            self.tags.append(str(tag).lower())
     
     def __str__(self):
         return f"""Article fields:

@@ -78,6 +78,8 @@ def get_tag_data(tag, date):
     connection = sqlite3.connect('articles.db')
     cursor = connection.cursor()
 
+    tag = str(tag).lower()
+
     cursor.execute("""SELECT article_id FROM tags
                          WHERE tagName=(:tagName)
                          AND article_id IN
