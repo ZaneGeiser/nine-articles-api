@@ -22,14 +22,19 @@ def main():
     @app.route('/articles', methods=['POST'])
     def post_article():
         if request.method == 'POST':
-            article = request.get_json()
+            article = request.get_json(silent=True)
             print(article)
             keys = article.keys()
             expected_keys = ['id', 'title', 'body', 'date', 'tags']
             for key in expected_keys:
                 if key not in keys:
                     return "Bad Request"
-            new_article = Article(article['id'], article['title'], article['body'], article['date'], article['tags'])
+            new_article = Article(article['id'], article['title'], article['body'], article['date'])
+            print(new_article)
+            for tag in article['tags']:
+                print(f"each tag from json.tags: {tag}")
+                new_article.add_tag(tag)
+            print(new_article)
             db_interface.add_article(new_article)
             return 'Success'
 
@@ -48,7 +53,7 @@ def main():
                 }
                 return jsonify(article_dict)
             else:
-                return 'No matching article found.'
+                return jsonify('No matching article found.')
 
     @app.route('/tags/<tagName>/<date>', methods=['GET'])
     def get_tag_data_on_date(tagName, date):

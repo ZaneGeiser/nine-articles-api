@@ -18,9 +18,10 @@ TABLE articles
 
 TABLE tags
     COLUMNS (
-        id INTEGER PRIMARY KEY,
+        row_id INTEGER PRIMARY KEY,
         article_id INTEGER,
-        tagName TEXT
+        tagName TEXT,
+        UNIQUE (article_id, tagName)
     )
 
 """
@@ -34,11 +35,12 @@ def add_article(article):
     connection = sqlite3.connect('articles.db')
     cursor = connection.cursor()
     
-    cursor.execute("INSERT INTO articles VALUES (:id, :title, :body, :date)",
+    cursor.execute("INSERT OR REPLACE INTO articles VALUES (:id, :title, :body, :date)",
         {'id': article.id, 'title': article.title, 'body': article.body, 'date': article.date })
     connection.commit()
     for tag in article.tags:
-        cursor.execute("INSERT INTO tags VALUES (:article_id, :tagName)", {'article_id': article.id, 'tagName': tag})
+        cursor.execute("""INSERT OR IGNORE INTO tags (article_id, tagName) VALUES (:article_id, :tagName);""",
+                            {'article_id': article.id, 'tagName': tag})
         connection.commit()
     connection.close()
     return True
@@ -74,27 +76,36 @@ def get_tag_data(tag, date):
     connection = sqlite3.connect('articles.db')
     cursor = connection.cursor()
 
-    #query for article ids with matching date
-    cursor.execute("SELECT id FROM articles WHERE date=(:date)", {'date': date})
-    date_article_ids = clean_list_tuple(cursor.fetchall())
-    if date_article_ids is None: return None 
-    #query for article ids with matching tag and date
-    cursor.execute("SELECT article_id FROM tags WHERE tagName=(:tagName) AND article_id IN (:article_ids)", {'tagName': tag, 'article_ids': date_article_ids})
-    tag_article_ids = clean_list_tuple(cursor.fetchall())
-    if tag_article_ids is None: return None
-    #sum of articles with matching tag and date
-    count = len(tag_article_ids)
-    #query for related tags
-    cursor.execute("SELECT tagName FROM tags WHERE tagName!=(:tagName) AND article_id IN (:article_ids)", {'tagName': tag, 'article_ids': tag_article_ids })
+    cursor.execute("""SELECT article_id FROM tags
+                         WHERE tagName=(:tagName)
+                         AND article_id IN
+                         (SELECT id FROM articles WHERE date=(:date))""",
+                     {'tagName': tag, 'date': date})
+
+    article_ids = clean_list_tuple(cursor.fetchall())
+    print(f'tag_date_article_ids: {article_ids}')
+    if article_ids is None: return None
+    
+    cursor.execute("""SELECT tagName FROM tags WHERE tagName!=(:tagName)
+                        AND article_id IN
+                        (SELECT article_id FROM tags
+                         WHERE tagName=(:tagName)
+                         AND article_id IN
+                         (SELECT id FROM articles WHERE date=(:date)))""",
+                     {'tagName': tag, 'date': date})
+
     related_tags = clean_list_tuple(cursor.fetchall())
-    if related_tags:
-        related_tags = []
-    else:
-        related_tags = list(dict.fromkeys(related_tags))
+    print(f'related_tags pre clean: {related_tags}')
+    #remove duplicate related tags
+    related_tags = list(dict.fromkeys(related_tags))
+    print(f'related_tags post clean: {related_tags}')
+    
+    count = len(article_ids)
+    print(f'count of tags: {count}')
     
     connection.close()
 
-    return {'tag': tag, 'count': count, 'articles': tag_article_ids, 'related_tags': related_tags}
+    return {'tag': tag, 'count': count, 'articles': article_ids, 'related_tags': related_tags}
 
 
 
@@ -104,11 +115,9 @@ def clean_list_tuple(list_):
     is in a tuple. this function pulls the item out of single tuples.
     """
     output = []
-    if list_:
-        if len(list_) > 0:
-            if len(list[0]) == 1:
-                for item in list_:
-                    output += item[0]
+    if list_ is not None:
+        for item in list_:
+            output.append(str(item[0]))
     return output
                     
 connection.commit()

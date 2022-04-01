@@ -6,7 +6,7 @@ class Article():
         self.title = title
         self.body = body
         self.date = date
-        self.tags = self.set_tags(tags)
+        self.set_tags(tags)
 
     def set_title(self, title):
         self.title = title
@@ -23,9 +23,24 @@ class Article():
         
     def set_tags(self, tags):
         if isinstance(tags, list):
-         self.tags = tags
+            self.tags = tags
+            print("tags after creating empty tag list: " + str(self.tags))
         else:
             try:
                 self.tags = list(tags)
+                print("tags after casting to a list: " + str(self.tags))
             except TypeError:
                 raise TypeError('incorrect tags format. tags must be in a list.')
+            
+    def add_tag(self, tag):
+        if isinstance(tag, str):
+            self.tags.append(str(tag))
+        print('tags after adding tags: ' + str(self.tags))
+    
+    def __str__(self):
+        return f"""Article fields:
+                    id: {self.id},
+                    title: {self.title},
+                    body: {self.body},
+                    date: {self.date},
+                    tags: {self.tags}"""
